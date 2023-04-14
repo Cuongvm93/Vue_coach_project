@@ -3,21 +3,29 @@
         <h3>{{ fullName }}</h3>
         <h4>${{ rate }}</h4>
         <div>
-            <span v-for="e in areas" :key="e">{{ area }}</span>
+            <base-badge v-for="e in areas" :key="e" :type="e" :title="e"></base-badge>
         </div>
         <div class="actions">
-            <router-link to="/coaches/c1/contact">Contact</router-link>
-            <router-link to="/coaches/c1">View Detail</router-link>
+            <base-button link   mode="outline" :to="contact">Contact</base-button>
+            <base-button link  :to="viewDetail">View Detail</base-button>
         </div>
     </li>
 </template>
 <script>
     export default{
+     
         props:['id','firstName','lastName','rate','areas'],
         computed:{
             fullName(){
                 return this.firstName +" " + this.lastName
             },
+            contact(){
+                return this.$route.path + '/'+this.id +'/contact'
+            },
+            viewDetail(){
+                return this.$route.path + '/'+this.id
+            }
+
         }
     }
 </script>

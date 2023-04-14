@@ -24,7 +24,11 @@ export default{
               ]
         }
     },
-    mutations:{},
+    mutations:{
+      addCoach(state,payload){
+        state.coach.push(payload)
+      }
+    },
     getters:{
         coaches(state){
             return state.coach
