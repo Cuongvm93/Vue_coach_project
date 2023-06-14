@@ -11,6 +11,7 @@
  methods:{
     saveCoach(data){
     this.$store.commit('coach/addCoach',data)
+    this.$router.push('/coaches')
     }
  }
  }

@@ -1,48 +1,54 @@
 <template>
   <form>
     <div class="form-control">
-      <label for="firstName" :class="{invalid: !valid.firstNameValid}">FirstName</label >
-      <input type="text" id="firstName" v-model.trim="info.firstName" :class="{invalid: !valid.firstNameValid}"/>
+      <label for="firstName" >FirstName</label >
+      <input type="text" id="firstName" v-model.trim="info.firstName" :class="{invalid_input: V$.info.firstName.required.$invalid && isCheck}"/>
+      <span v-if="V$.info.firstName.required.$invalid && isCheck" class="invalid-text">FirstName is not empty!</span>
     </div>
     <div class="form-control">
-      <label for="lastName" :class="{invalid:valid.lastNameValid}"> Lastname </label>
-      <input type="text" id="lastName" v-model.trim="info.lastName" :class="{invalid:!valid.lastNameValid}" />
+      <label for="lastName" > Lastname </label>
+      <input type="text" id="lastName" v-model.trim="info.lastName" :class="{invalid_input: V$.info.lastName.required.$invalid && isCheck}" />
+      <span v-if="V$.info.lastName.required.$invalid && isCheck" class="invalid-text">LastName is not empty</span>
     </div>
     <div class="form-control">
-      <label for="description" :class="{invalid:valid.descValid}">Description</label>
+      <label for="description" >Description</label>
       <textarea
         name=""
         id="description"
         cols="30"
         rows="5"
         v-model.trim="info.description"
-        :class="{invalid:valid.descValid}"
+        :class="{invalid_input: V$.info.description.required.$invalid && isCheck}"
+        @input="handleInput"
       ></textarea>
+      <span v-if="V$.info.description.required.$invalid && isCheck" class="invalid-text">Description is not empty!</span>
+      <span v-if="!V$.info.description.minValue.$response && isCheck" class="invalid-text">Description min 20 characters</span>
     </div>
     <div class="form-control">
-      <label for="rate" :class="{invalid:valid.rateValid}">Rate</label>
-      <input type="number" id="rate" v-model.trim="info.rate" :class="{invalid:valid.rateValid}" />
+      <label for="rate" >hourlyRate</label>
+      <input type="number" id="rate" v-model.trim="info.hourlyRate"    />
     </div>
     <base-card>
     <span>
-      <input type="checkbox" name="" id="frontend" @change="addAreas($event)" :class="{invalid:valid.checkboxValid}"/>
-      <label for="frontend" :class="{invalid:valid.checkboxValid}">FrontEnd</label>
+      <input type="checkbox" name="" id="frontend" @change="addAreas($event)" />
+      <label for="frontend" >FrontEnd</label>
     </span>
     <span>
-      <input type="checkbox" name="" id="backend" @change="addAreas($event)" :class="{invalid:valid.checkboxValid}"/>
-      <label for="backend" :class="{invalid:valid.checkboxValid}">BackEnd</label>
+      <input type="checkbox" name="" id="backend" @change="addAreas($event)" />
+      <label for="backend" >BackEnd</label>
     </span>
     <span>
-      <input type="checkbox" name="" id="career" @change="addAreas($event)" :class="{invalid:valid.checkboxValid}"/>
-      <label for="career" :class="{invalid:valid.checkboxValid}">Career</label>
+      <input type="checkbox" name="" id="career" @change="addAreas($event)" />
+      <label for="career">Career</label>
     </span>
     </base-card>
+    <span v-if="V$.info.areas.required.$invalid && isCheck" class="invalid-text"> Must choice at least 1 skill</span>
   </form>
   <button @click="submitInfo">Submit</button>
 </template>
 <script>
 import {useVuelidate} from '@vuelidate/core'
-import {required} from '@vuelidate/validators'
+import {required, minLength, minValue} from '@vuelidate/validators'
 export default {
   emits: ["save-coach"],
   setup(){
@@ -54,79 +60,54 @@ export default {
         firstName: "",
         lastName: "",
         description: "",
-        rate: 0,
+        hourlyRate: 0,
         areas: [],
 
       },
-      valid:{
-        formValid:true,
-        firstNameValid:true,
-        lastNameValid:true,
-        checkboxValid:true,
-        rateValid:true, 
-        descValid:true,
-      }
+      isCheck: false
     };
   },
   validations(){
     return{
-      firstName:{required},
-      lastName:{required}
+     info:{
+      firstName: {required},
+      lastName: {required},
+      description: {required, minValue: minLength(20)},
+      areas: {required}
+     }
+    }
+  },
+  computed:{
+    isEnableSubmit(){
+      return (
+        !this.V$.info.firstName.required.$invalid &&
+        !this.V$.info.lastName.required.$invalid &&
+        !this.V$.info.description.required.$invalid &&
+        this.V$.info.description.minValue.$response &&
+        !this.V$.info.areas.required.$invalid
+      )
     }
   },
   methods: {
     addAreas(event){
         if (event.target.checked==true) {
-            console.log(event.target.id);
-            console.log("run");
-            this.info.areas.push(event.target.id)
+          this.info.areas.push(event.target.id)
         }else{
             this.info.areas.splice(this.info.areas.indexOf(event.target.id),1)
         }
     },
-    validateForm(){
-        if(this.info.firstName.length<0){
-        console.log(1);
-        this.valid.firstNameValid==false
-        this.valid.formValid==false
-      }
-      if(this.info.lastName.length<0){
-        console.log(2);
-        this.valid.lastNameValid==false
-        this.valid.formValid==false
-      }
-      if(this.info.description.length<0){
-        console.log(3);
-        this.valid.descValid==false
-        this.valid.formValid==false
-      }
-      if(this.info.rate<0 ){
-        console.log(4);
-        this.valid.rateValid==false
-        this.valid.formValid==false    }
-      if (this.info.areas.length<0) {
-        console.log(5);
-        this.valid.checkboxValid==false
-        this.valid.formValid==false
-      }
-      
-    },
+  
     submitInfo() { 
-      console.log(this.V$.firstName.$error)
-      const infoCoach = {
-        id:Math.floor(Math.random()*100),
-        firstName: this.info.firstName,
-        lastName: this.info.lastName,
-        description: this.info.description,
-        hourlyRate: this.info.rate,
-        areas:this.info.areas
-      };
-      
-      if (this.valid.formValid) {
-        this.$emit("save-coach", infoCoach);
-        this.$store.commit()
-        this.$router.removeRoute('/register')
+      this.isCheck = true
+      if(this.isEnableSubmit){
+        this.$emit('save-coach',this.info)
       }
+      
+      // if (this.valid.formValid) {
+      //   this.$emit("save-coach", infoCoach);
+      //   this.$store.commit()
+      //   this.$router.removeRoute('/register')
+      // }
     },
   },
 };
@@ -182,8 +163,14 @@ h3 {
   color: red;
 }
 
-.invalid input,
+.invalid-text{
+  color: red
+}
+.invalid_input {
+  border:1px solid red;
+}
 .invalid textarea{
   border: 1px solid red;
+  background-color: red
 }
 </style>

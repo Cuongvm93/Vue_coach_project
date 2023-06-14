@@ -26,7 +26,8 @@ export default{
     },
     mutations:{
       addCoach(state,payload){
-        state.coach.push(payload)
+        const data = {...payload, id :'c' +(state.coach.length+1)}
+        state.coach.push(data)
       }
     },
     getters:{

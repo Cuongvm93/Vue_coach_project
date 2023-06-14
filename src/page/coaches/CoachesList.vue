@@ -44,7 +44,6 @@ export default{
     computed: {
        filterCoaches(){
         const allCoaches=this.$store.getters['coach/coaches']
-        console.log('chạy lại')
             console.log(allCoaches)
         const resultFilter= allCoaches.filter(e=>{
             
@@ -72,3 +71,8 @@ export default{
     }
 }
 </script>
+<style scoped>
+li{
+    list-style: none;
+}
+</style>
