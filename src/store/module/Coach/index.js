@@ -1,3 +1,4 @@
+import axios from "axios"
 export default{
     namespaced  :true,
     state(){
@@ -28,6 +29,9 @@ export default{
       addCoach(state,payload){
         const data = {...payload, id :'c' +(state.coach.length+1)}
         state.coach.push(data)
+      },
+      updateCoach(state,payload){
+        state.coach = payload
       }
     },
     getters:{
@@ -38,5 +42,18 @@ export default{
             return state.coach && state.coach.length >0
         }
     },
-    actions:{}
+    actions:{
+      async createCoaches({commit}, payload){
+        await axios.post('https://api-demo-b53b2-default-rtdb.asia-southeast1.firebasedatabase.app/coaches.json',{
+          body: payload
+        })
+        commit('addCoach',payload)
+      },
+
+      async getAllCoaches({commit}, payload){
+       const response= await axios.get('https://api-demo-b53b2-default-rtdb.asia-southeast1.firebasedatabase.app/coaches.json')
+        const data = Object.values(response.data).map(e => e.body)
+       commit('updateCoach',data)
+      }
+    }
 }

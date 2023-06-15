@@ -2,7 +2,7 @@
     <CoachFillter @change-filter="updateFilter"/>
     <section>
         <div class="controll">
-            <button>Refresh</button>
+            <button @click="refreshListCoach">Refresh</button>
             <router-link to="/register">Register as coach</router-link>
         </div>
         <base-card>
@@ -25,6 +25,8 @@
     </section>
 </template> 
 <script>
+import { mapState, mapMutations, mapGetters } from 'vuex';
+import {mapFields} from 'vuex-map-fields'
 import CoachesItem from '../../components/Coaches/CoachesItem.vue';
 import CoachFillter from '../../components/Coaches/CoachFillter.vue';
 export default{
@@ -42,6 +44,9 @@ export default{
         CoachFillter
     },
     computed: {
+        ...mapFields({
+            data: 'request.infoCoach.firstName'
+        }),
        filterCoaches(){
         const allCoaches=this.$store.getters['coach/coaches']
             console.log(allCoaches)
@@ -67,6 +72,10 @@ export default{
     methods:{
         updateFilter(updateItem){
             this.item=updateItem
+        },
+        refreshListCoach(){
+            console.log(this.$store.getters['request/getInfoCoach'])
+            // this.$store.dispatch('coach/getAllCoaches')
         }
     }
 }

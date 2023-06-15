@@ -1,9 +1,10 @@
 import {createStore} from 'vuex'
-import axios from 'axios'
 import coachStore from './module/Coach/index'
+import request from './module/Request/index'
 const store=createStore({
     modules:{
         coach:coachStore,
+        request: request,
     }
 })
 

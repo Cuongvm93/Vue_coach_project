@@ -10,7 +10,7 @@
  },
  methods:{
     saveCoach(data){
-    this.$store.commit('coach/addCoach',data)
+    this.$store.dispatch('coach/createCoaches',data)
     this.$router.push('/coaches')
     }
  }

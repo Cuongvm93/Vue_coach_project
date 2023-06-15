@@ -1,9 +1,10 @@
+import { getField, updateField } from "vuex-map-fields"
 export default{
-    namspace:true,
+    namespaced:true,
     state(){
         return{
             infoCoach:{
-                firstName:"",
+                firstName:"eqweqwe",
                 lastName:'',
                 areas:[],
                 description:'',
@@ -12,9 +13,10 @@ export default{
         }
     },
     getters:{
-        
+        getField,
     },
     mutations:{
+        updateField,
         
     }
 }
